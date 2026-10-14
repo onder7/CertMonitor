@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SSL Sertifika Durumu</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #0e1d35;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #d9232e; /* Corendon Red */
+      --primary-hover: #b81923;
+      --navy: #0e1d35;
+      --navy-hover: #1e293b;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --crit: #dc2626;
+      --exp: #7f1d1d;
+      --unr: #6b7280;
+      --chain: #9333ea;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-accent {
+      width: 36px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 2px;
+      margin-bottom: 8px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: var(--card);
+      padding: 18px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    .bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card, .panel, .wrap {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .card b {
+      display: block;
+      font-size: 24px;
+      color: var(--navy);
+    }
+
+    .card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    input, select, button {
+      padding: 9px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(217, 35, 46, 0.12);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      background: #ffffff;
+      border-color: #d1d5db;
+    }
+
+    button:hover {
+      background: #f9fafb;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .danger {
+      color: #dc2626;
+      border-color: #fee2e2;
+    }
+
+    .danger:hover {
+      background: #fef2f2;
+    }
+
+    .wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1000px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    th {
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 600;
+      background: #f8fafc;
+      user-select: none;
+    }
+
+    th:hover {
+      color: var(--navy);
+    }
+
+    tr.row {
+      transition: background 0.15s ease;
+    }
+
+    tr.row:hover {
+      background: #f8fafc;
+      cursor: pointer;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .OK { background: var(--ok); }
+    .Warning { background: var(--warn); }
+    .Critical { background: var(--crit); }
+    .Expired { background: var(--exp); }
+    .Unreachable { background: var(--unr); }
+    .ChainError { background: var(--chain); }
+
+    .detail td {
+      white-space: normal;
+      background: #f8fafc;
+      line-height: 1.7;
+      padding: 16px;
+      color: #374151;
+    }
+
+    .panel {
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      font-size: 16px;
+      margin: 0 0 12px;
+      color: var(--navy);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: var(--navy);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div>
+      <div class="header-accent"></div>
+      <h1>SSL Sertifika Durumu <span class="muted" id="info"></span></h1>
+    </div>
+    <div class="actions">
+      <a href="/settings.html"><button>⚙️ Ayarlar</button></a>
+      <span class="muted" id="who" style="font-weight: 600;"></span>
+      <button id="logout" class="danger">Çıkış</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="actions">
+      <button class="primary" id="toggleTargets">Hedefleri görüntüle</button>
+      <span class="muted" id="targetMsg"></span>
+    </div>
+    <div id="targetPanel" class="hidden">
+      <hr style="border:0; border-top:1px solid var(--line); margin: 16px 0;">
+      <p class="muted" style="margin:0 0 12px">Hedefler <b>targets.csv</b> dosyasından okunur. Değişiklik yapmak için targets.csv dosyasını düzenleyin ve uygulamayı yeniden başlatın veya "Şimdi tara" butonuna tıklayın.</p>
+      <div class="wrap">
+        <table>
+          <thead>
+            <tr><th>Host</th><th>Port</th><th>SNI</th><th>Ortam</th><th>Sahip</th><th>Durum</th></tr>
+          </thead>
+          <tbody id="targetBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="bar">
+    <input id="q" placeholder="Ara (host, sahip, issuer)…" size="28">
+    <select id="env"><option value="">Tüm ortamlar</option></select>
+    <select id="st"><option value="">Tüm durumlar</option></select>
+    <button class="primary" id="scan">Şimdi tara</button>
+    <a href="/api/export.csv"><button type="button">CSV indir</button></a>
+  </div>
+
+  <div class="wrap">
+    <table>
+      <thead><tr id="head"></tr></thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+
+<script>
+const cols=[['host','Host'],['ipAddress','IP'],['port','Port'],['environment','Ortam'],['owner','Sahip'],['daysLeft','Kalan gün'],['notAfter','Bitiş'],['issuer','Issuer'],['tlsVersion','TLS'],['status','Durum'],['scannedAt','Son tarama']],order=['Expired','Critical','ChainError','Warning','Unreachable','OK'];let data=[],targets=[],sortKey='daysLeft',sortDir=1,open=null,editing=null;const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),cn=s=>(/CN=([^,]+)/.exec(s||'')||[])[1]||s||'',fmt=d=>d?new Date(d).toLocaleString('tr-TR'):'';head.innerHTML=cols.map(c=>`<th data-k="${c[0]}">${c[1]}</th>`).join('');head.onclick=e=>{let k=e.target.dataset.k;if(k){sortDir=sortKey===k?-sortDir:1;sortKey=k;render()}};['q','env','st'].forEach(id=>$(id).oninput=render);
+async function api(url,opt){try{let r=await fetch(url,opt);if(r.status===401){location.href='/login.html';throw Error('Oturum süresi doldu. Lütfen tekrar giriş yapın.')}if(!r.ok){let j=await r.json().catch(()=>({}));const messages={400:'Girilen bilgiler hatalı',403:'Bu işlem için yetkiniz yok',404:'Kayıt bulunamadı',409:'Bu kayıt zaten mevcut',500:'Sunucu hatası oluştu',503:'Servis geçici olarak kullanılamıyor'};throw Error(j.error||j.title||messages[r.status]||`Hata: ${r.status}`)}return r}catch(e){if(e.message==='Failed to fetch')throw Error('Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.');throw e}}async function load(){try{let r=await api('/api/results'),j=await r.json();data=j.results;info.textContent=j.scanning?'— tarama sürüyor…':'';fill('env',[...new Set(data.map(r=>r.environment).filter(Boolean))]);fill('st',order);render();if(j.scanning)setTimeout(load,3000)}catch(e){info.textContent='⚠️ Veriler yüklenemedi: '+e.message;setTimeout(load,10000)}}function fill(id,vals){let e=$(id),cur=e.value,first=e.options[0].outerHTML;e.innerHTML=first+vals.map(v=>`<option>${esc(v)}</option>`).join('');e.value=cur}
+function render(){let q=$('q').value.toLowerCase(),env=$('env').value,st=$('st').value,rows=data.filter(r=>(!env||r.environment===env)&&(!st||r.status===st)&&(!q||[r.host,r.owner,r.issuer,r.subject].join(' ').toLowerCase().includes(q)));rows.sort((a,b)=>{let x=a[sortKey],y=b[sortKey];if(sortKey==='status'){x=order.indexOf(x);y=order.indexOf(y)}if(x==null)return 1;if(y==null)return-1;return(x>y?1:x<y?-1:0)*sortDir});cards.innerHTML=`<div class="card" onclick="$('st').value='';render()"><b>${data.length}</b><span>Toplam</span></div>`+order.map(s=>`<div class="card" onclick="$('st').value='${s}';render()"><b>${data.filter(r=>r.status===s).length}</b><span>${s}</span></div>`).join('');body.innerHTML=rows.map(r=>{let k=r.host+':'+r.port,h=`<tr class="row" onclick="toggle('${esc(k)}')"><td>${esc(r.host)}</td><td class="muted">${esc(r.ipAddress)||'-'}</td><td>${r.port}</td><td>${esc(r.environment)}</td><td>${esc(r.owner)}</td><td>${r.daysLeft??''}${r.renewed?' 🔄':''}</td><td>${r.notAfter?new Date(r.notAfter).toLocaleDateString('tr-TR'):''}</td><td>${esc(cn(r.issuer))}</td><td>${esc(r.tlsVersion)}</td><td><span class="badge ${r.status}">${r.status}</span></td><td class="muted">${fmt(r.scannedAt)}</td></tr>`;return open===k?h+`<tr class="detail"><td colspan="11">${detail(r)}</td></tr>`:h}).join('')}function detail(r){if(r.error)return`<b>Hata:</b> ${esc(r.error)}`;return`<b>IP:</b> ${esc(r.ipAddress)||'Bilinmiyor'}<br><b>Subject:</b> ${esc(r.subject)}<br><b>Issuer:</b> ${esc(r.issuer)}<br><b>Geçerlilik:</b> ${fmt(r.notBefore)} → ${fmt(r.notAfter)}<br><b>Thumbprint:</b> ${esc(r.thumbprint)}<br><b>İmza / Anahtar:</b> ${esc(r.signatureAlgorithm)} / ${esc(r.keyInfo)}<br><b>SAN:</b> ${esc(r.san.join(', '))}<br><b>Hostname:</b> ${r.hostnameMatch?'Evet':'HAYIR'}<br><b>Protokoller:</b> ${esc(r.supportedProtocols.join(', '))}<br>${r.chainErrors.length?`<b>Zincir:</b> ${esc(r.chainErrors.join(', '))}<br>`:''}${r.warnings.length?`<b>Uyarılar:</b> ${esc(r.warnings.join(' • '))}`:''}`}function toggle(k){open=open===k?null:k;render()}
+async function loadTargets(){targets=await(await api('/api/targets')).json();targetBody.innerHTML=targets.map(t=>`<tr><td>${esc(t.host)}</td><td>${t.port}</td><td>${esc(t.sniName)}</td><td>${esc(t.environment)}</td><td>${esc(t.owner)}</td><td><span class="badge ${t.enabled?'OK':'Unreachable'}">${t.enabled?'Aktif':'Pasif'}</span></td></tr>`).join('')}
+toggleTargets.onclick=async()=>{targetPanel.classList.toggle('hidden');if(!targetPanel.classList.contains('hidden'))await loadTargets()};scan.onclick=async()=>{let btn=scan;btn.disabled=true;btn.textContent='Taranıyor...';try{await api('/api/scan',{method:'POST'});targetMsg.textContent='Tarama başlatıldı';setTimeout(load,1000)}catch(e){targetMsg.textContent='Tarama başlatılamadı: '+e.message}finally{setTimeout(()=>{btn.disabled=false;btn.textContent='Şimdi tara'},2000)}};logout.onclick=async()=>{await fetch('/api/auth/logout',{method:'POST'});location.href='/login.html'};api('/api/auth/me').then(r=>r.json()).then(x=>who.textContent=x.userName||'').catch(()=>location.href='/login.html');load();
+</script>
+
+<div class="footer">
+  Ondernet.Net &bull; Geliştirici: <a href="https://www.linkedin.com/in/onderakoz" target="_blank" rel="noopener">Önder AKÖZ</a>
+</div>
+
+</body>
+</html>

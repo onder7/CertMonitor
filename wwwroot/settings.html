@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ayarlar - SSL Sertifika Durumu</title><style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1c2128;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--green:#16a34a;--red:#dc2626}*{box-sizing:border-box}body{margin:0;font:14px system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--text);padding:20px}h1{font-size:20px;margin:0 0 16px}h2{font-size:16px;margin:24px 0 12px;border-bottom:2px solid var(--line);padding-bottom:8px}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:20px}.form-group{margin-bottom:16px}.form-group label{display:block;margin-bottom:6px;font-weight:600;color:var(--muted)}.form-group input,.form-group select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font:inherit}.form-group input[type="checkbox"]{width:auto;margin-right:8px}.form-row{display:grid;grid-template-columns:2fr 1fr;gap:12px}.actions{display:flex;gap:8px;margin-top:20px}button{padding:8px 16px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--text);font:inherit;cursor:pointer}.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.success{background:var(--green);color:#fff;border-color:var(--green)}.danger{background:var(--red);color:#fff;border-color:var(--red)}.info{padding:12px;background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;margin-bottom:16px;color:#1565c0}.warning{padding:12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:6px;margin-bottom:16px;color:#e65100}.success-msg{padding:12px;background:#e8f5e9;border:1px solid #81c784;border-radius:6px;margin-bottom:16px;color:#2e7d32}.error-msg{padding:12px;background:#ffebee;border:1px solid #e57373;border-radius:6px;margin-bottom:16px;color:#c62828}.hidden{display:none}.footer{margin-top:40px;padding:20px 0;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px}.footer a{color:#2563eb;text-decoration:none}.footer a:hover{text-decoration:underline}
+</style></head><body><div class="top"><h1>⚙️ Ayarlar</h1><div><a href="/"><button>🏠 Ana Sayfa</button></a> <button id="logout">Çıkış</button></div></div>
+
+<div class="card"><h2>📧 E-posta Bildirimleri</h2><div class="info">SSL sertifikaları süresi dolmak üzere olan sistemler için otomatik e-posta bildirimi gönderir. Tarama tamamlandıktan sonra kritik, uyarı veya süresi dolmuş sertifikalar için bildirim gönderilir. Ayarlar App_Data/email-config.json dosyasına kaydedilir.</div><div id="emailMsg" class="hidden"></div>
+
+<div class="form-group"><label><input type="checkbox" id="enabled">E-posta bildirimlerini etkinleştir</label></div>
+
+<h3 style="font-size:14px;margin:20px 0 12px;color:var(--muted)">SMTP Sunucu Ayarları</h3><div class="form-row"><div class="form-group"><label>SMTP Sunucu</label><input id="smtpHost" placeholder="smtp.gmail.com"></div><div class="form-group"><label>Port</label><input id="smtpPort" type="number" value="587"></div></div>
+
+<div class="form-group"><label><input type="checkbox" id="useSsl" checked>SSL/TLS kullan</label></div>
+
+<div class="form-row"><div class="form-group"><label>Kullanıcı adı (E-posta)</label><input id="username" placeholder="kullanici@example.com"></div><div class="form-group"><label>Parola</label><input id="password" type="password" placeholder="********"></div></div>
+
+<h3 style="font-size:14px;margin:20px 0 12px;color:var(--muted)">Gönderen Bilgileri</h3><div class="form-row"><div class="form-group"><label>Gönderen E-posta</label><input id="fromAddress" placeholder="certmonitor@example.com"></div><div class="form-group"><label>Gönderen Adı</label><input id="fromName" value="CertMonitor"></div></div>
+
+<h3 style="font-size:14px;margin:20px 0 12px;color:var(--muted)">Alıcı Bilgileri</h3><div class="form-group"><label>Alıcı E-posta Adresleri (virgül veya noktalı virgülle ayırın)</label><input id="toAddresses" placeholder="admin@example.com, it@example.com"></div>
+
+<h3 style="font-size:14px;margin:20px 0 12px;color:var(--muted)">Bildirim Kuralları</h3><div class="form-group"><label>Bildirim gönderilecek gün sayısı (sertifika bitmesine X gün kala)</label><input id="notifyDaysBefore" type="number" value="30" min="1" max="365"></div>
+
+<div class="form-group"><label><input type="checkbox" id="notifyOnExpired" checked>Süresi dolmuş sertifikalar için bildir</label></div><div class="form-group"><label><input type="checkbox" id="notifyOnCritical" checked>Kritik sertifikalar için bildir (7 gün ve altı)</label></div><div class="form-group"><label><input type="checkbox" id="notifyOnWarning" checked>Uyarı seviyesindeki sertifikalar için bildir (30 gün ve altı)</label></div>
+
+<div class="actions"><button class="primary" id="saveBtn">💾 Kaydet</button><button class="success" id="testBtn">📨 Test E-postası Gönder</button></div></div>
+
+<div class="card hidden" id="testSection"><h2>📨 E-posta Testi</h2><p class="info">SMTP ayarlarınızı test etmek için bir e-posta adresi girin.</p><div id="testMsg" class="hidden"></div><div class="form-group"><label>Test E-posta Adresi</label><input id="testAddress" type="email" placeholder="test@example.com"></div><button class="success" id="sendTestBtn">Gönder</button></div>
+
+<script>
+const $=id=>document.getElementById(id);
+async function api(url,opt){try{let r=await fetch(url,opt);if(r.status===401){location.href='/login.html';throw Error('Oturum süresi doldu')}if(!r.ok){let j=await r.json().catch(()=>({}));throw Error(j.error||j.title||'İşlem başarısız')}return r}catch(e){if(e.message==='Failed to fetch')throw Error('Sunucuya bağlanılamıyor');throw e}}
+function showMsg(id,msg,type){let el=$(id);el.className=type+'-msg';el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),5000)}
+
+async function loadSettings(){try{let r=await api('/api/settings/email'),s=await r.json();$('enabled').checked=s.enabled;$('smtpHost').value=s.smtpHost||'';$('smtpPort').value=s.smtpPort||587;$('useSsl').checked=s.useSsl;$('username').value=s.username||'';$('password').value='';$('password').placeholder=s.password?'********':'';$('fromAddress').value=s.fromAddress||'';$('fromName').value=s.fromName||'CertMonitor';$('toAddresses').value=s.toAddresses||'';$('notifyDaysBefore').value=s.notifyDaysBefore||30;$('notifyOnExpired').checked=s.notifyOnExpired;$('notifyOnCritical').checked=s.notifyOnCritical;$('notifyOnWarning').checked=s.notifyOnWarning}catch(e){showMsg('emailMsg','Ayarlar yüklenemedi: '+e.message,'error')}}
+
+saveBtn.onclick=async()=>{try{saveBtn.disabled=true;saveBtn.textContent='Kaydediliyor...';let data={enabled:$('enabled').checked,smtpHost:$('smtpHost').value.trim(),smtpPort:+$('smtpPort').value,useSsl:$('useSsl').checked,username:$('username').value.trim(),password:$('password').value,fromAddress:$('fromAddress').value.trim(),fromName:$('fromName').value.trim(),toAddresses:$('toAddresses').value.trim(),notifyDaysBefore:+$('notifyDaysBefore').value,notifyOnExpired:$('notifyOnExpired').checked,notifyOnCritical:$('notifyOnCritical').checked,notifyOnWarning:$('notifyOnWarning').checked};let r=await api('/api/settings/email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});let j=await r.json();showMsg('emailMsg',j.message,'success');$('password').value='';$('password').placeholder='********'}catch(e){showMsg('emailMsg','Ayarlar kaydedilemedi: '+e.message,'error')}finally{saveBtn.disabled=false;saveBtn.textContent='💾 Kaydet'}};
+
+testBtn.onclick=()=>{$('testSection').classList.toggle('hidden')};
+
+sendTestBtn.onclick=async()=>{let addr=$('testAddress').value.trim();if(!addr){showMsg('testMsg','Lütfen bir e-posta adresi girin.','error');return}try{sendTestBtn.disabled=true;sendTestBtn.textContent='Gönderiliyor...';let r=await api('/api/settings/email/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({testAddress:addr})});let j=await r.json();showMsg('testMsg',j.message,'success')}catch(e){showMsg('testMsg','Test e-postası gönderilemedi: '+e.message,'error')}finally{sendTestBtn.disabled=false;sendTestBtn.textContent='Gönder'}};
+
+logout.onclick=async()=>{await fetch('/api/auth/logout',{method:'POST'});location.href='/login.html'};
+loadSettings();
+</script><div class="footer">Geliştirici: <a href="https://www.linkedin.com/in/onderakoz" target="_blank" rel="noopener">Önder AKÖZ</a></div></body></html>
